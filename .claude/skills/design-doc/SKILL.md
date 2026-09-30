@@ -14,7 +14,7 @@ description: 설계 문서(workplace/<프로젝트명>/docs/02_design.md) 작성
 
 ## 템플릿
 
-```markdown
+````markdown
 # <프로젝트명> 설계
 
 - 명세: docs/01_spec.md
@@ -69,7 +69,7 @@ def add_task(title: str) -> Task:
 |---|---|---|---|
 | T-01 | … | AC-1, AC-2 | - |
 | T-02 | … | AC-3 | T-01 |
-```
+````
 
 ## 태스크 나누는 법
 - 태스크 하나는 **리뷰 한 번에 볼 수 있는 크기**로 한다. (대략 파일 1~3개, 코드 200줄 이하)
