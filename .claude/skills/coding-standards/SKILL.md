@@ -27,7 +27,7 @@ description: 이 회사의 파이썬 코딩 규칙(스타일, 구조, 오류 처
 - [판단] 사용자 입력은 받는 즉시 검증하고, 잘못되면 이유가 담긴 메시지로 알린다.
 
 ## 4. 로깅과 디버깅
-- [자동] `src/`에서는 `print` 대신 `logging.getLogger(__name__)`을 쓴다. (CLI의 사용자 출력 전용 모듈은 예외)
+- [자동] `src/`에서는 `print` 대신 `logging.getLogger(__name__)`을 쓴다. (단, 사용자에게 보여줄 출력만 담당하는 `cli.py`는 예외)
 - [자동] `breakpoint()`, `pdb.set_trace()`를 남기지 않는다.
 - [자동] TODO는 `# TODO(T-03): 내용`처럼 태스크 ID를 붙여서만 쓴다.
 
