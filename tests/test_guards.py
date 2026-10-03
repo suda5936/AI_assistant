@@ -58,6 +58,19 @@ def test_admin_mode_unlocks_harness_files(harness: Harness) -> None:
     assert result.returncode == 0
 
 
+def test_admin_mode_does_not_bypass_roles_in_workplace(harness: Harness) -> None:
+    harness.admin_on()
+    result = harness.run("guard_write.py", edit_event(harness.root / f"{P}/src/app.py"))
+    assert result.returncode == 2
+    assert "'main' 역할" in result.stderr
+
+
+def test_non_admin_cannot_touch_harness_area(harness: Harness) -> None:
+    result = harness.run("guard_write.py", edit_event(harness.root / "scripts/report.py"))
+    assert result.returncode == 2
+    assert "workplace 밖" in result.stderr
+
+
 def test_secret_file_blocked_even_for_admin(harness: Harness) -> None:
     harness.admin_on()
     result = harness.run("guard_write.py", edit_event(harness.root / f"{P}/.env", "developer"))
