@@ -73,6 +73,11 @@ check:
 	cd frontend && npm run --silent lint && npm run --silent typecheck && npm run --silent test
 ```
 
+## 품질 명령의 기준값 (서비스)
+- `make coverage`: 백엔드 `pytest --cov=<패키지> --cov-fail-under=80`, 프론트엔드 vitest 커버리지 `lines`·`functions` 70% 이상. 미달이면 실패로 끝나야 한다.
+- `make audit`: 백엔드 `pip-audit` (dev 의존성에 추가), 프론트엔드 `npm audit --audit-level=high`. high 이상 취약점이 있으면 실패.
+- `make openapi`: 백엔드 앱에서 OpenAPI 문서를 `docs/api/openapi.json`으로 내보낸다 (API 문서, 완료 기준 D7).
+
 ## 설정과 비밀값
 - 모든 설정은 환경변수로 읽는다. 기본값이 있으면 코드에, 비밀값은 기본값 없이.
 - `.env.example`에 **모든 변수**를 설명과 함께 적는다 (실제 비밀값은 쓰지 않는다). 실제 `.env`는 사람이 만들고, 에이전트는 읽거나 쓰지 않는다 (훅이 막는다).

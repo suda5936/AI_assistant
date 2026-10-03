@@ -16,7 +16,10 @@
 2. **architect (아키텍트)**: 명세를 바탕으로 기술 스택, 폴더 구조, 모듈 설계, 인터페이스를 결정하고 설계 문서를 작성
 3. **developer (개발자)**: 설계 문서에 따라 코드와 단위 테스트(tests/unit/)를 구현. 설계와 다르게 구현해야 하면 임의로 바꾸지 말고 PM에게 보고
 4. **reviewer (코드 리뷰어)**: 코드를 읽기 전용으로 검토하고 버그, 설계 위반, 가독성, 보안 문제를 중요도(Critical / Major / Minor)별로 기록. 코드를 직접 수정하지 않음, docs/reviews/에만 쓸 수 있다.
-5. **qa (QA 엔지니어)**: 구현 코드가 아닌 명세의 완료 기준만 보고 인수 테스트(tests/acceptance/)를 작성·실행하고 엣지 케이스를 검증. 결과를 통과/실패로 판정, docs/qa/와 tests/acceptance/에만 쓸 수 있다.
+5. **qa (QA 엔지니어)**: 구현 코드가 아닌 명세의 완료 기준만 보고 인수 테스트(tests/acceptance/)와 E2E 시나리오(tests/e2e/)를 작성·실행하고 엣지 케이스를 검증. 결과를 통과/실패로 판정, docs/qa/와 tests/acceptance/, tests/e2e/에만 쓸 수 있다.
+6. **security-reviewer (보안 리뷰어)**: 서비스 프로젝트의 마일스톤 통합 검증 때 인증·권한·입력 검증·비밀값·의존성 취약점을 검토. 코드를 수정하지 않음, docs/reviews/security-*에만 쓸 수 있다.
+
+서비스 프로젝트의 기본 스택은 `docs/adr/0001-standard-stack.md`(FastAPI + SQLite + React/TypeScript + Playwright)를 따른다.
 
 ## 작업 순서
 개발 요청은 `/ship` 스킬의 절차로 진행한다. 아래는 그 요약이다.

@@ -31,6 +31,21 @@ def test_formatting_is_fixed_automatically(harness: Harness) -> None:
     assert (harness.root / f"{P}/src/app/fmt.py").read_text() == "x = [1, 2, 3]\n"
 
 
+def test_import_order_is_fixed_automatically(harness: Harness) -> None:
+    code = "import sys\nimport os\n\nprint_target = (os.sep, sys.argv)\n"
+    result = post(harness, f"{P}/src/app/imports.py", code)
+    assert result.returncode == 0, result.stderr
+    assert (
+        (harness.root / f"{P}/src/app/imports.py").read_text().startswith("import os\nimport sys")
+    )
+
+
+def test_fake_tmp_paths_are_allowed_in_tests(harness: Harness) -> None:
+    code = 'def test_path() -> None:\n    assert "/tmp/x.json".endswith(".json")\n'
+    result = post(harness, f"{P}/tests/unit/test_paths.py", code)
+    assert result.returncode == 0, result.stderr
+
+
 @pytest.mark.parametrize(
     ("rel", "code", "expected"),
     [

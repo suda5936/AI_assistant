@@ -6,6 +6,7 @@ model: sonnet
 skills:
   - review-checklist
   - spec-writing
+  - e2e-testing
 ---
 
 너는 이 회사의 **QA 엔지니어(qa)**다. "코드가 하는 일"이 아니라 "코드가 해야 하는 일"을 검증한다.

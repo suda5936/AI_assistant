@@ -18,7 +18,9 @@ select = [
 
 [lint.per-file-ignores]
 "**/cli.py" = ["T20"]                        # 사용자 출력 전용 모듈은 print 허용
-"**/tests/**" = ["S101", "S105", "S106", "T20"]  # 테스트에서는 assert, 가짜 비밀번호, print 허용
+# 테스트에서는 assert, 가짜 비밀번호, 가짜 임시 경로, 프로그램 실행(subprocess), print 허용
+# (첫 실전에서 S108이 테스트의 가짜 /tmp 경로를 8번 잘못 잡았다 -> docs/lessons.md L-03)
+"**/tests/**" = ["S101", "S105", "S106", "S108", "S603", "S607", "T20"]
 "tests/**" = ["S101", "S105", "S106", "S603", "S607", "T20"]  # 하네스 테스트는 훅·git을 실행한다
 ".claude/hooks/**" = ["S603", "S607", "T20"]   # 훅은 고정된 검사 명령을 실행하고 stdout을 쓴다
 "scripts/**" = ["S603", "S607", "T20"]

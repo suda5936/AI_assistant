@@ -64,6 +64,8 @@ def check_python(path: Path) -> list[str]:
         code, out = run([sys.executable, "-m", "py_compile", str(path)], path.parent)
         return [f"문법 오류: {out}"] if code else []
     cwd = component_root(path, "pyproject.toml") or path.parent
+    # 기계적으로 고칠 수 있는 것(포맷, import 정렬)은 에이전트를 왕복시키지 않고 바로 고친다.
+    run(["ruff", "check", "--fix", "--quiet", "--select", "I", str(path)], cwd)
     run(["ruff", "format", "--quiet", str(path)], cwd)
     code, out = run(["ruff", "check", "--output-format", "concise", str(path)], cwd)
     if code == 0:

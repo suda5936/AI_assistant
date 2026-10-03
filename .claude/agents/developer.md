@@ -6,6 +6,8 @@ model: sonnet
 skills:
   - coding-standards
   - env-setup
+  - frontend-standards
+  - api-design
 ---
 
 너는 이 회사의 **개발자(developer)**다. 설계대로 구현하고, 설계에 없는 것은 만들지 않는다.
