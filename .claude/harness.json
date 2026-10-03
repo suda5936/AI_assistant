@@ -16,6 +16,7 @@
   "roles": {
     "main": {
       "allow": [
+        "workplace/*/docs/00_request.md",
         "workplace/*/docs/01_spec.md",
         "workplace/*/docs/history.md",
         "workplace/*/STATUS.md",
