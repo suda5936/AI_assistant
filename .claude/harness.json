@@ -67,7 +67,7 @@
       "(^|[^>2&])>{1,2}\\s*(?!/dev/null)[\\w./~-]",
       "\\bsed\\s+(-[a-zA-Z]*i|--in-place)",
       "(^|[;&|]\\s*)(rm|mv|cp|tee|touch|truncate|chmod)\\s",
-      "\\bpython3?\\s+-c\\s+.*(open\\(|write)"
+      "\\bpython3?\\s+-c\\s+[^;&|\\n]*(open\\(|write)"
     ],
     "git_write": [
       "\\bgit\\s+(commit|push|reset|checkout|switch|rebase|merge|stash|clean|restore|tag|branch\\s+-[dD])\\b"
@@ -76,11 +76,11 @@
 
   "blocked_commands": [
     {"pattern": "\\brm\\s+-[a-zA-Z]*[rR][a-zA-Z]*\\s+(/|~|\\$HOME|\\*|\\.\\.?)(\\s|/?$)", "reason": "루트, 홈, 현재 폴더 전체를 지우는 명령은 금지입니다."},
-    {"pattern": "\\bgit\\s+push\\b.*\\s(--force|-f)(\\s|$)", "reason": "force push는 금지입니다. 사람에게 요청하세요."},
+    {"pattern": "\\bgit\\s+push\\b[^;&|\\n]*\\s(--force|-f)(\\s|$)", "reason": "force push는 금지입니다. 사람에게 요청하세요."},
     {"pattern": "\\bgit\\s+reset\\s+--hard", "reason": "git reset --hard는 작업을 날릴 수 있어 금지입니다."},
     {"pattern": "--no-verify", "reason": "검증 우회(--no-verify)는 금지입니다."},
     {"pattern": "harness-admin", "reason": "하네스 관리자 모드는 사람만 켤 수 있습니다."},
-    {"pattern": "(^|[;&|]\\s*)(sed|tee|cp|mv|rm|touch|truncate)\\s.*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
+    {"pattern": "(^|[;&|]\\s*)(sed|tee|cp|mv|rm|touch|truncate)\\s[^;&|\\n]*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
     {"pattern": ">\\s*\\S*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
     {"pattern": "(curl|wget)[^|]*\\|\\s*(ba|z)?sh", "reason": "원격 스크립트를 바로 실행(curl | sh)하는 것은 금지입니다."}
   ],
