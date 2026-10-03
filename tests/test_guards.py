@@ -83,6 +83,25 @@ def test_paths_outside_harness_are_ignored(harness: Harness, tmp_path) -> None:
     assert result.returncode == 0
 
 
+@pytest.mark.parametrize(
+    ("role", "rel", "blocked"),
+    [
+        ("qa", f"{P}/src/app/core.py", True),
+        ("qa", f"{P}/backend/src/board/services/posts.py", True),
+        ("qa", f"{P}/frontend/src", True),  # Grep/Glob로 폴더를 검색하는 경우
+        ("qa", f"{P}/docs/02_design.md", False),
+        ("qa", f"{P}/tests/acceptance/test_ac1.py", False),
+        ("reviewer", f"{P}/src/app/core.py", False),
+        (None, f"{P}/src/app/core.py", False),
+    ],
+)
+def test_read_restrictions(harness: Harness, role: str | None, rel: str, blocked: bool) -> None:
+    event = edit_event(harness.root / rel, role)
+    event["tool_name"] = "Read"
+    result = harness.run("guard_read.py", event)
+    assert (result.returncode == 2) is blocked, result.stderr
+
+
 # 위험 명령은 이 파일 자체가 차단 규칙에 걸리지 않도록 조각을 이어 붙여 만든다.
 FORCE = "--" + "force"
 NO_VERIFY = "--no-" + "verify"

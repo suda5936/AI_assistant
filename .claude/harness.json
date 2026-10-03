@@ -54,6 +54,11 @@
         "workplace/*tests/acceptance/*",
         "workplace/*tests/e2e/*"
       ],
+      "read_deny": [
+        "workplace/*/src/*",
+        "workplace/*/backend/src/*",
+        "workplace/*/frontend/src/*"
+      ],
       "bash_deny": ["file_write", "git_write"]
     },
     "default": {

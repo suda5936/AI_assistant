@@ -34,6 +34,10 @@
       {
         "matcher": "Bash",
         "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard_bash.py", "timeout": 10 }]
+      },
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard_read.py", "timeout": 10 }]
       }
     ],
     "PostToolUse": [
