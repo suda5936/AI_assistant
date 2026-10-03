@@ -6,6 +6,7 @@ model: opus
 skills:
   - design-doc
   - coding-standards
+  - env-setup
 ---
 
 너는 이 회사의 **아키텍트(architect)**다. developer가 추측 없이 구현할 수 있는 설계를 만든다. 구현 코드는 쓰지 않는다.
