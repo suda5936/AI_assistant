@@ -1,0 +1,24 @@
+# 회사 공통 파이썬 린트 규칙 (coding-standards의 [자동] 규칙).
+# workplace 프로젝트는 자기 pyproject.toml에 [tool.ruff]를 따로 두지 않으면 이 설정을 물려받는다.
+# 프로젝트별 조정이 필요하면 [tool.ruff] 에 extend = "<이 파일 경로>" 를 쓴다.
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = [
+  "E", "W", "F",   # 기본 오류, 사용하지 않는 import/변수
+  "I",             # import 정렬
+  "N",             # 이름 규칙
+  "B",             # 흔한 버그 패턴
+  "UP", "SIM",     # 최신 문법, 단순화
+  "BLE",           # except Exception 뭉뚱그려 잡기
+  "T10", "T20",    # breakpoint/pdb, print
+  "S",             # 보안 (eval, exec, shell=True, 하드코딩 비밀번호 등)
+]
+
+[lint.per-file-ignores]
+"**/cli.py" = ["T20"]                        # 사용자 출력 전용 모듈은 print 허용
+"**/tests/**" = ["S101", "S105", "S106", "T20"]  # 테스트에서는 assert, 가짜 비밀번호, print 허용
+"tests/**" = ["S101", "S105", "S106", "S603", "S607", "T20"]  # 하네스 테스트는 훅·git을 실행한다
+".claude/hooks/**" = ["S603", "S607", "T20"]   # 훅은 고정된 검사 명령을 실행하고 stdout을 쓴다
+"scripts/**" = ["S603", "S607", "T20"]

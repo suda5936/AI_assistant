@@ -1,0 +1,111 @@
+{
+  "admin_flag": "~/.claude/harness-admin",
+
+  "protected_paths": [
+    "CLAUDE.md",
+    "ROADMAP.md",
+    ".claude/*",
+    "ruff.toml",
+    "tests/*",
+    "docs/*"
+  ],
+
+  "secret_paths": [".env", ".env.*", "*.pem", "*.key", "id_rsa*"],
+  "secret_path_exceptions": [".env.example"],
+
+  "roles": {
+    "main": {
+      "allow": [
+        "workplace/*/docs/01_spec.md",
+        "workplace/*/docs/history.md",
+        "workplace/*/STATUS.md",
+        "workplace/*/README.md"
+      ]
+    },
+    "architect": {
+      "allow": [
+        "workplace/*/docs/02_design.md",
+        "workplace/*/docs/milestones/*",
+        "workplace/*/docs/adr/*"
+      ]
+    },
+    "developer": {
+      "allow": ["workplace/*"],
+      "deny": [
+        "workplace/*/docs/*",
+        "workplace/*/STATUS.md",
+        "workplace/*tests/acceptance/*",
+        "workplace/*tests/e2e/*"
+      ],
+      "bash_deny": ["git_write"]
+    },
+    "reviewer": {
+      "allow": ["workplace/*/docs/reviews/*"],
+      "bash_deny": ["file_write", "git_write"]
+    },
+    "security-reviewer": {
+      "allow": ["workplace/*/docs/reviews/security-*"],
+      "bash_deny": ["file_write", "git_write"]
+    },
+    "qa": {
+      "allow": [
+        "workplace/*/docs/qa/*",
+        "workplace/*tests/acceptance/*",
+        "workplace/*tests/e2e/*"
+      ],
+      "bash_deny": ["file_write", "git_write"]
+    },
+    "default": {
+      "allow": ["workplace/*"],
+      "deny": ["workplace/*/docs/*", "workplace/*/STATUS.md"]
+    }
+  },
+
+  "bash_rule_groups": {
+    "file_write": [
+      "(^|[^>2&])>{1,2}\\s*(?!/dev/null)[\\w./~-]",
+      "\\bsed\\s+(-[a-zA-Z]*i|--in-place)",
+      "(^|[;&|]\\s*)(rm|mv|cp|tee|touch|truncate|chmod)\\s",
+      "\\bpython3?\\s+-c\\s+.*(open\\(|write)"
+    ],
+    "git_write": [
+      "\\bgit\\s+(commit|push|reset|checkout|switch|rebase|merge|stash|clean|restore|tag|branch\\s+-[dD])\\b"
+    ]
+  },
+
+  "blocked_commands": [
+    {"pattern": "\\brm\\s+-[a-zA-Z]*[rR][a-zA-Z]*\\s+(/|~|\\$HOME|\\*|\\.\\.?)(\\s|/?$)", "reason": "루트, 홈, 현재 폴더 전체를 지우는 명령은 금지입니다."},
+    {"pattern": "\\bgit\\s+push\\b.*\\s(--force|-f)(\\s|$)", "reason": "force push는 금지입니다. 사람에게 요청하세요."},
+    {"pattern": "\\bgit\\s+reset\\s+--hard", "reason": "git reset --hard는 작업을 날릴 수 있어 금지입니다."},
+    {"pattern": "--no-verify", "reason": "검증 우회(--no-verify)는 금지입니다."},
+    {"pattern": "harness-admin", "reason": "하네스 관리자 모드는 사람만 켤 수 있습니다."},
+    {"pattern": "(^|[;&|]\\s*)(sed|tee|cp|mv|rm|touch|truncate)\\s.*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
+    {"pattern": ">\\s*\\S*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
+    {"pattern": "(curl|wget)[^|]*\\|\\s*(ba|z)?sh", "reason": "원격 스크립트를 바로 실행(curl | sh)하는 것은 금지입니다."}
+  ],
+
+  "edit_checks": {
+    "max_file_lines": 300,
+    "max_feedback_lines": 25,
+    "secret_patterns": [
+      {"pattern": "AKIA[0-9A-Z]{16}", "name": "AWS 액세스 키"},
+      {"pattern": "sk-(ant-|proj-)?[A-Za-z0-9_-]{20,}", "name": "API 키(sk-...)"},
+      {"pattern": "gh[pousr]_[A-Za-z0-9]{36,}", "name": "GitHub 토큰"},
+      {"pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----", "name": "개인 키"},
+      {"pattern": "(?i)(password|passwd|secret|api_key|apikey|access_token)\\s*[:=]\\s*['\"][^'\"\\s]{8,}['\"]", "name": "하드코딩된 비밀값"}
+    ],
+    "line_rules": [
+      {"glob": "*.py", "pattern": "#\\s*TODO(?!\\(T-\\d+\\))", "message": "TODO는 '# TODO(T-03): 내용'처럼 태스크 ID를 붙여서 쓰세요 (coding-standards §4)."},
+      {"glob": "*.ts*", "pattern": "//\\s*TODO(?!\\(T-\\d+\\))", "message": "TODO는 '// TODO(T-03): 내용'처럼 태스크 ID를 붙여서 쓰세요."},
+      {"glob": "*.ts*", "pattern": "\\bconsole\\.log\\(", "message": "console.log를 남기지 마세요 (frontend-standards)."},
+      {"glob": "*.ts*", "pattern": "\\bdebugger\\b", "message": "debugger 문을 남기지 마세요."},
+      {"glob": "*", "pattern": "(#|//)\\s*(noqa|type:\\s*ignore|eslint-disable|@ts-ignore|@ts-nocheck)", "message": "검사를 끄는 주석은 금지된 꼼수입니다. 꼭 필요하면 PM에게 이유를 보고하세요 (coding-standards §6)."}
+    ]
+  },
+
+  "quality_gate": {
+    "max_retries": 3,
+    "subagent_roles": ["developer"],
+    "timeout_sec": 600
+  }
+}
