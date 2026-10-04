@@ -1,6 +1,6 @@
 # 회사 공통 파이썬 린트 규칙 (coding-standards의 [자동] 규칙).
-# workplace 프로젝트는 자기 pyproject.toml에 [tool.ruff]를 따로 두지 않으면 이 설정을 물려받는다.
-# 프로젝트별 조정이 필요하면 [tool.ruff] 에 extend = "<이 파일 경로>" 를 쓴다.
+# workplace 프로젝트는 환경 구성 태스크에서 이 파일을 자기 루트에 복사해 쓴다 (env-setup 스킬).
+# 저장소 밖 파일을 extend로 참조하면 다른 곳에 클론했을 때 규칙이 사라지므로 쓰지 않는다 (lessons L-17).
 line-length = 100
 target-version = "py311"
 

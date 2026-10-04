@@ -21,7 +21,9 @@ description: 프로젝트 환경 구성 규칙. 표준 Makefile 명령(setup, ch
 ## 파이썬 프로젝트
 - 구조: `src/<패키지>/` + `tests/unit/`, `tests/acceptance/`. 패키지 정보는 `pyproject.toml` 하나에 둔다.
 - 가상환경은 프로젝트 안의 `.venv/`. Makefile은 `.venv`가 있으면 그것을, 없으면 시스템 python3를 쓴다.
-- **린트 규칙은 회사 공통 `ruff.toml`(하네스 루트)을 물려받는다.** `pyproject.toml`에 `[tool.ruff]`를 따로 만들지 않는다.
+- **린트 규칙은 회사 공통 `ruff.toml`(하네스 루트)을 프로젝트 루트에 복사해 둔다** (환경 구성 태스크에서). 하네스 밖에 클론해도 같은 규칙으로 검사되어야 하기 때문이다 (D3, lessons L-17).
+  - 복사본 첫 줄에 "회사 공통 ruff.toml의 복사본. 회사 규칙이 바뀌면 함께 바꾼다"를 적는다. 규칙을 빼거나 완화하지 않는다. `extend`로 저장소 밖 파일을 참조하지 않는다.
+  - `pyproject.toml`에는 `[tool.ruff]`를 두지 않는다 (두면 그 폴더에서 루트 복사본을 가린다).
 - pytest 설정은 `pyproject.toml`의 `[tool.pytest.ini_options]`에 둔다 (`pythonpath = ["src"]`, `testpaths = ["tests"]`).
 - 의존성은 버전 범위를 명시한다 (예: `fastapi>=0.110,<1`). 개발 도구는 `[project.optional-dependencies] dev`에.
 
