@@ -1,6 +1,12 @@
 {
   "admin_flag": "~/.claude/harness-admin",
 
+  "notify": {
+    "enabled": true,
+    "to": "gustlr3308@naver.com",
+    "dedupe_minutes": 120
+  },
+
   "protected_paths": [
     "CLAUDE.md",
     "ROADMAP.md",

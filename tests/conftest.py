@@ -26,8 +26,12 @@ class Harness:
     root: Path
     home: Path
 
-    def run(self, script: str, event: dict) -> subprocess.CompletedProcess:
+    def run(
+        self, script: str, event: dict, extra_env: dict | None = None
+    ) -> subprocess.CompletedProcess:
         env = {**os.environ, "CLAUDE_PROJECT_DIR": str(self.root), "HOME": str(self.home)}
+        env = {k: v for k, v in env.items() if not k.startswith("HARNESS_")}
+        env.update(extra_env or {})
         return subprocess.run(
             [sys.executable, str(HOOKS / script)],
             input=json.dumps(event),

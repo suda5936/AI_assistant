@@ -144,6 +144,24 @@ def tamper_once(tampered: list[str]) -> bool:
     return True
 
 
+def notify_gave_up(names: list[str], failures: list[str], max_retries: int) -> None:
+    """에이전트가 스스로 해결하지 못한 상태 -> 대표에게 메일."""
+    try:
+        from notify import send
+    except ImportError:
+        return
+    body = "\n".join(
+        [
+            f"품질 게이트가 {max_retries}회 연속 실패해 에이전트가 더 진행하지 못합니다.",
+            f"프로젝트: {', '.join(names) or '-'}",
+            "",
+            "실패 내용 (앞부분):",
+            *(f[:800] for f in failures[:3]),
+        ]
+    )
+    send("품질 게이트 중단: 사람의 확인 필요", body, kind="gave_up")
+
+
 def main() -> int:
     event = read_event()
     hook = event.get("hook_event_name", "Stop")
@@ -181,6 +199,7 @@ def main() -> int:
     if count > max_retries:
         bump_failures(role, reset=True)
         log_event("quality_gate", "gave_up", role=role, event=hook, projects=names)
+        notify_gave_up(names, failures, max_retries)
         message = (
             f"[HARNESS] 품질 게이트가 {max_retries}회 연속 실패했습니다. 사람의 확인이 필요합니다."
         )

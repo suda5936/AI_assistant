@@ -47,7 +47,13 @@
       }
     ],
     "Stop": [
-      { "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/quality_gate.py", "timeout": 900 }] }
+      { "hooks": [
+        { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/quality_gate.py", "timeout": 900 },
+        { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify_hooks.py", "timeout": 30 }
+      ] }
+    ],
+    "Notification": [
+      { "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify_hooks.py", "timeout": 30 }] }
     ],
     "SubagentStop": [
       { "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/quality_gate.py", "timeout": 900 }] }

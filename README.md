@@ -119,6 +119,22 @@ claude                      # 처음 실행 시 작업 공간 신뢰(trust)를 �
 - 헤드리스 실행: `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 claude -p "/ship ..." --permission-mode acceptEdits --allowedTools Bash`
   (환경변수가 없으면 헤드리스 모드는 10분 넘게 걸리는 에이전트 작업을 기다리지 않고 종료합니다 — lessons L-16)
 
+### 사람이 필요할 때 메일 받기
+에이전트는 최대한 스스로 처리하고(도구 자동 설치 포함, `doctor` 스킬), **사람만 할 수 있는 일**만 메일로 요청합니다.
+| 메일이 오는 경우 | 예 |
+|---|---|
+| 결정·승인 | 명세 질문, 명세 승인, ADR, 3회 반려 |
+| 관리자 권한 설치 | python, git, make, node 없음 (설치 명령 포함) |
+| 권한 확인 창 | Claude Code가 도구 사용 허락을 기다림 |
+| 진행 불가 | 품질 게이트 3회 연속 실패 |
+
+설정 (한 번만):
+```bash
+cp .env.example .env     # HARNESS_SMTP_USER, HARNESS_SMTP_PASSWORD 입력 (.env는 git·에이전트 모두 접근 불가)
+python3 .claude/hooks/notify.py --test   # 테스트 메일
+```
+받는 주소는 `.claude/harness.json`의 `notify.to`입니다. 같은 내용은 2시간 안에 다시 보내지 않습니다.
+
 ### 하네스 자체를 고칠 때 (관리자 모드)
 에이전트는 `CLAUDE.md`, `.claude/`, `tests/` 등 하네스 영역을 수정할 수 없습니다 (훅이 차단, 셸 우회는 품질 게이트가 변조로 감지).
 사람이 하네스를 고칠 때만 관리자 모드를 켭니다. 관리자 모드에서도 `workplace` 안에서는 역할 규칙이 그대로 적용됩니다.

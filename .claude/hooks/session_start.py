@@ -30,25 +30,42 @@ def summarize(text: str) -> str:
     return "\n".join(line for line in keep if line.strip())[:4000]
 
 
+def missing_tools() -> list[str]:
+    """doctor 의 간단 점검. 빠진 도구만 한 줄씩."""
+    try:
+        from doctor import check
+    except ImportError:
+        return []
+    return [
+        f"- {t.name} 없음 ({'자동 설치 가능' if t.tier == 'auto' else '사람 설치 필요'})"
+        for t in check(service=False)
+        if not t.found
+    ]
+
+
 def main() -> int:
+    out: list[str] = []
+    tools = missing_tools()
+    if tools:
+        out.append("[HARNESS] 개발 도구가 빠져 있습니다. doctor 스킬대로 처리하세요.")
+        out += tools
+
     workplace = harness_root() / "workplace"
-    if not workplace.is_dir():
-        return PASS
     active = []
-    for status in sorted(workplace.glob("*/STATUS.md")):
+    for status in sorted(workplace.glob("*/STATUS.md")) if workplace.is_dir() else []:
         text = status.read_text(encoding="utf-8")
         if not DONE.search(text):
             active.append((status.parent.name, text))
-    if not active:
-        return PASS
-
-    out = [
-        "[HARNESS] 진행 중인 프로젝트가 있습니다. project-status 스킬의 세션 재개 절차를 따르세요."
-    ]
-    for name, text in active:
-        out.append(f"\n--- workplace/{name}/STATUS.md (요약) ---")
-        out.append(summarize(text))
-    print("\n".join(out))
+    if active:
+        out.append(
+            "[HARNESS] 진행 중인 프로젝트가 있습니다. "
+            "project-status 스킬의 세션 재개 절차를 따르세요."
+        )
+        for name, text in active:
+            out.append(f"\n--- workplace/{name}/STATUS.md (요약) ---")
+            out.append(summarize(text))
+    if out:
+        print("\n".join(out))
     return PASS
 
 
