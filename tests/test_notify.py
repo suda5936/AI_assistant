@@ -17,7 +17,7 @@ STATUS = """# STATUS: shop
 
 ## 사용자 결정 대기
 - [승인] 명세 Q1~Q3 답변 필요 — docs/01_spec.md
-- [설치] make 없음 — 관리자 권한 필요: winget install -e --id ezwinports.make
+- [설치] make 없음 — 관리자 권한 필요: winget install -e --id GnuWin32.Make
 
 ## 다음 할 일
 - 답변 대기
@@ -44,7 +44,7 @@ def test_pending_decisions_alert_on_stop(harness: Harness, tmp_path: Path) -> No
     assert result.returncode == 0
     alert = alerts(tmp_path)
     assert "[AI_assistant] 결정 필요: shop (2건)" in alert
-    assert "winget install -e --id ezwinports.make" in alert
+    assert "winget install -e --id GnuWin32.Make" in alert
 
 
 def test_same_decision_is_not_repeated(harness: Harness, tmp_path: Path) -> None:

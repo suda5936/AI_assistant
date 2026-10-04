@@ -46,6 +46,6 @@ python3 .claude/hooks/doctor.py --notify [--service]
 ```markdown
 ## 사용자 결정 대기
 - [승인] 명세 Q1~Q3 답변 필요 — docs/01_spec.md "미해결 질문" (제안값 있음, "제안대로"로 답 가능)
-- [설치] make 없음 — 관리자 권한 필요: winget install -e --id ezwinports.make
+- [설치] make 없음 — 관리자 권한 필요: winget install -e --id GnuWin32.Make
 ```
 한 줄에 **무엇을, 어디서, 어떻게** 처리하면 되는지 쓴다. 대표는 알림만 보고 무엇을 해야 하는지 알 수 있어야 한다.

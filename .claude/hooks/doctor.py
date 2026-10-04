@@ -96,7 +96,10 @@ def tools() -> list[Tool]:
             bool(shutil.which("make")),
             "human",
             {
-                "windows": "winget install -e --id ezwinports.make   (또는 WSL 사용 권장)",
+                "windows": (
+                    "winget install -e --id GnuWin32.Make  "
+                    "(설치 후 PATH에 C:\\Program Files (x86)\\GnuWin32\\bin 추가)"
+                ),
                 "mac": "xcode-select --install",
                 "linux": "sudo apt-get install -y make",
             },
