@@ -73,7 +73,9 @@ setup:
 check:
 	$(MAKE) -C backend check
 	cd frontend && npm run --silent lint && npm run --silent typecheck && npm run --silent test
+	# qa의 인수 테스트(백엔드·프론트엔드)도 반드시 포함한다 (lessons L-20)
 ```
+- `make check`는 **백엔드·프론트엔드의 단위 테스트와 인수 테스트를 모두** 실행해야 한다. 빠진 테스트는 품질 게이트가 보지 못한다.
 
 ## 품질 명령의 기준값 (서비스)
 - `make coverage`: 백엔드 `pytest --cov=<패키지> --cov-fail-under=80`, 프론트엔드 vitest 커버리지 `lines`·`functions` 70% 이상. 미달이면 실패로 끝나야 한다.

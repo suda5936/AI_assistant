@@ -82,10 +82,26 @@ def check_js(path: Path) -> list[str]:
         run([str(bin_dir / "prettier"), "--write", "--log-level", "warn", str(path)], cwd)
     if not (bin_dir / "eslint").exists():
         return []
-    code, out = run([str(bin_dir / "eslint"), "--format", "unix", str(path)], cwd)
+    # 출력 형식은 버전마다 달라진다(ESLint 9에서 unix 형식 제거, lessons L-19). JSON으로 받는다.
+    code, out = run([str(bin_dir / "eslint"), "--format", "json", str(path)], cwd)
     if code == 0:
         return []
-    return [line for line in out.splitlines() if line and "problem" not in line]
+    return parse_eslint_json(out, path.name)
+
+
+def parse_eslint_json(out: str, name: str) -> list[str]:
+    """eslint JSON 출력을 '파일:줄:칸 메시지 (규칙)' 목록으로 바꾼다."""
+    try:
+        results = json.loads(out[out.index("[") :])
+    except (ValueError, json.JSONDecodeError):
+        return [f"eslint 실행 오류: {out[:300]}"]
+    issues = []
+    for result in results:
+        for msg in result.get("messages", []):
+            rule = msg.get("ruleId") or "parse"
+            line, col = msg.get("line", 0), msg.get("column", 0)
+            issues.append(f"{name}:{line}:{col} {msg.get('message', '')} ({rule})")
+    return issues
 
 
 def check_json(path: Path) -> list[str]:

@@ -105,6 +105,28 @@ def test_typescript_console_log_is_detected(harness: Harness) -> None:
     assert "console.log" in result.stderr
 
 
+FAKE_ESLINT = """#!/bin/sh
+# 가짜 eslint: --format json 으로 불렸는지 확인하고 문제 하나를 보고한다.
+case "$*" in
+  *"--format json"*) ;;
+  *) echo "unsupported formatter" >&2; exit 2 ;;
+esac
+echo '[{"filePath":"x","messages":[{"ruleId":"@typescript-eslint/no-explicit-any",'\\
+'"message":"Unexpected any.","line":1,"column":24}]}]'
+exit 1
+"""
+
+
+def test_eslint_problems_are_fed_back(harness: Harness) -> None:
+    """lessons L-19: ESLint 9에서 unix 형식이 사라져 검사가 동작하지 않았다."""
+    harness.write(f"{P}/frontend/package.json", '{"name": "fe"}')
+    eslint = harness.write(f"{P}/frontend/node_modules/.bin/eslint", FAKE_ESLINT)
+    eslint.chmod(0o755)
+    result = post(harness, f"{P}/frontend/src/Bad.tsx", "export const x = 1;\n")
+    assert result.returncode == 2
+    assert "Bad.tsx:1:24 Unexpected any. (@typescript-eslint/no-explicit-any)" in result.stderr
+
+
 def test_result_is_logged_with_role(harness: Harness) -> None:
     post(harness, f"{P}/src/app/a.py", "import os\n", role="developer")
     log = (harness.root / ".harness" / "logs" / "events.jsonl").read_text().splitlines()
