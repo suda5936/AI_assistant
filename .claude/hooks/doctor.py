@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import os
 import platform
-import shlex
 import shutil
 import subprocess
 import sys
@@ -145,14 +144,33 @@ def check(service: bool) -> list[Tool]:
     return [t for t in tools() if service or not t.service_only]
 
 
-def fix(missing: list[Tool], osk: str) -> list[tuple[str, bool]]:
+def fix_command(name: str) -> list[str] | None:
+    """자동 설치 명령을 인자 목록으로 만든다.
+
+    문자열을 나누면 Windows 경로의 백슬래시가 사라지므로(lessons L-23) 처음부터 목록으로 만든다.
+    """
+    pip = [PY, "-m", "pip", "install", "--user"]
+    npx = shutil.which("npx")  # Windows에서는 npx.cmd 전체 경로
+    commands = {
+        "ruff": [*pip, "ruff"],
+        "pytest": [*pip, "pytest"],
+        "playwright 브라우저": [npx, "-y", "playwright@1.56.1", "install", "chromium"]
+        if npx
+        else None,
+    }
+    return commands.get(name)
+
+
+def fix(missing: list[Tool]) -> list[tuple[str, bool]]:
     results = []
     for tool in missing:
-        if tool.tier != "auto":
+        cmd = fix_command(tool.name) if tool.tier == "auto" else None
+        if cmd is None:
             continue
-        cmd = tool.install[osk]
-        # 자동 설치 명령은 위에 고정된 문자열뿐이라 셸 없이 나눠서 실행한다.
-        ok = subprocess.run(shlex.split(cmd), capture_output=True, timeout=900).returncode == 0
+        try:
+            ok = subprocess.run(cmd, capture_output=True, timeout=900).returncode == 0
+        except (OSError, subprocess.TimeoutExpired):
+            ok = False
         results.append((tool.name, ok))
     return results
 
@@ -179,13 +197,17 @@ def notify_human(missing: list[Tool], osk: str) -> str:
 
 
 def main(argv: list[str]) -> int:
+    # Windows 한국어 콘솔(cp949)에서 표현할 수 없는 문자가 있어도 출력이 실패하지 않게 한다 (L-23).
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="replace")
     service = "--service" in argv
     osk = os_key()
     result = check(service)
     missing = [t for t in result if not t.found]
 
     if "--fix" in argv and missing:
-        for name, ok in fix(missing, osk):
+        for name, ok in fix(missing):
             print(f"자동 설치 {'성공' if ok else '실패'}: {name}")
         result = check(service)
         missing = [t for t in result if not t.found]
@@ -198,7 +220,9 @@ def main(argv: list[str]) -> int:
     print(f"[doctor] OS: {osk}")
     for t in result:
         mark = (
-            "✅" if t.found else ("🔧 자동 설치 가능" if t.tier == "auto" else "🙋 사람 설치 필요")
+            "[OK]"
+            if t.found
+            else ("[없음] 자동 설치 가능" if t.tier == "auto" else "[없음] 사람 설치 필요")
         )
         print(f"  {t.name:<20} {mark}" + ("" if t.found else f"  ->  {t.install[osk]}"))
 
