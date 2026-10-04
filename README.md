@@ -115,6 +115,18 @@ claude                      # 처음 실행 시 작업 공간 신뢰(trust)를 �
 
 - 요구 도구: Python 3.11+, `ruff`, `pytest`, `make`, (서비스) Node 22, Playwright 브라우저
 - 세션이 끊기면 다시 `claude`를 실행하면 됩니다. 시작 훅이 진행 중인 프로젝트를 알려주고 PM이 이어서 진행합니다.
+
+### 작업 도중 실수로 껐을 때
+```bash
+claude --continue      # 직전 대화 그대로 (또는 새로 claude 후)
+> 이어서 진행해
+```
+- **잃는 것은 없습니다.** 에이전트가 쓴 파일은 디스크에 그대로 있고, 프로젝트 기록은 STATUS.md와 git에 있습니다.
+- 끊긴 것은 "돌던 에이전트" 하나뿐입니다. 시작 훅이 다음을 자동으로 보여 줍니다.
+  - 어떤 에이전트 작업이 도중에 끊겼는지 (PM이 일을 맡길 때마다 훅이 기록, `.harness/state/inflight.json`)
+  - 프로젝트의 커밋되지 않은 변경 (커밋된 것 = 검수 통과, 그 이후 = 검수 전)
+- PM은 묻지 않고 `project-status` 스킬의 "중단 복구" 표대로 같은 작업을 다시 맡깁니다. 중단은 반려 횟수에 넣지 않습니다.
+- 주의: 같은 프로젝트를 claude 두 개로 동시에 돌리지 마세요. 서로의 STATUS와 파일을 덮어씁니다.
 - 에이전트나 스킬을 추가·수정한 뒤에는 **새 세션**을 시작해야 반영됩니다 (lessons L-04).
 - 헤드리스 실행: `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 claude -p "/ship ..." --permission-mode acceptEdits --allowedTools Bash`
   (환경변수가 없으면 헤드리스 모드는 10분 넘게 걸리는 에이전트 작업을 기다리지 않고 종료합니다 — lessons L-16)

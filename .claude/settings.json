@@ -38,6 +38,10 @@
       {
         "matcher": "Read|Grep|Glob",
         "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh guard_read.py", "timeout": 10 }]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh track_agents.py", "timeout": 10 }]
       }
     ],
     "PostToolUse": [
@@ -56,7 +60,10 @@
       { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh notify_hooks.py", "timeout": 30 }] }
     ],
     "SubagentStop": [
-      { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh quality_gate.py", "timeout": 900 }] }
+      { "hooks": [
+        { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh track_agents.py", "timeout": 10 },
+        { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh quality_gate.py", "timeout": 900 }
+      ] }
     ]
   }
 }

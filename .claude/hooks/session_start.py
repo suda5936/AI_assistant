@@ -8,9 +8,12 @@ stdout 으로 출력한 내용이 새 세션의 컨텍스트에 들어간다.
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
+from pathlib import Path
 
-from _lib import PASS, harness_root
+from _lib import PASS, harness_root, log_event, read_event
+from track_agents import load, save
 
 DONE = re.compile(r"현재 단계:\s*(완료|보류)")
 
@@ -43,8 +46,47 @@ def missing_tools() -> list[str]:
     ]
 
 
+def interrupted(source: str) -> list[str]:
+    """이전 세션에서 끝나지 않은 에이전트 작업. 프로세스가 새로 떴으면 모두 중단된 것이다."""
+    if source not in ("startup", "resume", ""):
+        return []  # compact·clear 는 같은 프로세스라 백그라운드 에이전트가 아직 돌 수 있다
+    entries = load()
+    if not entries:
+        return []
+    save([])
+    log_event("session_start", "interrupted", agents=entries)
+    lines = [
+        "[HARNESS] 이전 세션이 아래 에이전트 작업 도중 꺼졌습니다. "
+        "project-status 스킬의 '중단 복구' 절차대로 같은 작업을 다시 맡기세요."
+    ]
+    lines += [f"- {e['agent']}: {e['description']} (시작 {e['started']})" for e in entries]
+    return lines
+
+
+def git_state(project: Path) -> str:
+    """커밋되지 않은 변경(= 아직 검수를 통과하지 않은 작업) 요약."""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=project,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    if result.returncode != 0:
+        return ""
+    changed = [line[3:] for line in result.stdout.splitlines() if line.strip()]
+    if not changed:
+        return "커밋되지 않은 변경: 없음"
+    shown = ", ".join(changed[:10]) + (f" 외 {len(changed) - 10}개" if len(changed) > 10 else "")
+    return f"커밋되지 않은 변경 {len(changed)}개 (검수 전 작업일 수 있음): {shown}"
+
+
 def main() -> int:
-    out: list[str] = []
+    event = read_event()
+    out: list[str] = interrupted(event.get("source", ""))
     tools = missing_tools()
     if tools:
         out.append("[HARNESS] 개발 도구가 빠져 있습니다. doctor 스킬대로 처리하세요.")
@@ -64,6 +106,9 @@ def main() -> int:
         for name, text in active:
             out.append(f"\n--- workplace/{name}/STATUS.md (요약) ---")
             out.append(summarize(text))
+            state = git_state(workplace / name)
+            if state:
+                out.append(state)
     if out:
         print("\n".join(out))
     return PASS
