@@ -1,0 +1,28 @@
+- `8752e78` 명세 초안과 요청서 보관
+- `0e7ca5a` 명세 확정: Q1~Q11 제안대로 결정, 승인(대행)
+- `5e7fc19` 설계 완료(02_design, M1, ADR 제안), ADR 승인 대기
+- `a87d254` T-01: 백엔드 환경·앱 골격
+- `e374298` T-02: 공통 오류 처리 (예외명 Error 접미사로 설계 수정 포함)
+- `aee1d65` T-03: 모델·마이그레이션·비밀번호 해시, 설계 결정(서로게이트·field 규칙) 반영
+- `ef86516` T-04: 회원가입 (validation, create_user, 가입 API, field_from_loc)
+- `762ec71` T-05: 로그인·로그아웃·me (세션, authenticate 타이밍 수정 포함)
+- `eb0f076` T-06: 프론트 환경·실행 타깃 (vite 6, vitest 3, pytest 9로 audit 통과)
+- `bf99a96` T-07: 프론트 API 계층과 인증 상태
+- `d3a3535` T-08: 가입·로그인 화면 (main.tsx Router·AuthProvider 수정 포함)
+- `d5b3b28` T-09: 헤더·홈·404 (로그아웃 실패 처리 설계 반영)
+- `de899dc` M1 통합 검증 통과: QA E2E, 보안 리뷰, history 정리
+- `661eaa7` T-10: 게시글 모델·마이그레이션 (conftest create_all 복구)
+- `d730a97` T-11: 게시글 서비스 (validate_post, posts 서비스, 권한·페이지 규칙)
+- `66c96a6` T-12: 게시글 API (parse_page 앞자리 0 규칙, OpenAPI 422 형식)
+- `99093f9` T-13: 요청 보호 (본문 크기 상한, Transfer-Encoding 우회 차단, 보안 헤더, /docs 끔)
+- `fd5304d` T-14: 프론트 기반 (posts API, postId·datetime 유틸, 이월 Minor)
+- `be39785` T-15: 게시글 목록 화면 (LoginRequired, 이월 Minor 처리)
+- `e795269` T-16: 게시글 상세·삭제 화면 (PostNotFound, 이월 Minor 처리, formatKst 설계 반영)
+- `7967ccb` T-17: 글쓰기 화면 (PostForm, PostNewPage, 이월 Minor 처리)
+- `04f9841` STATUS: T-17 행 정리
+- `d7ac0e5` T-18: 글 수정 화면 (PostEditPage, 이월 Minor 처리)
+- `f11ae8b` T-19: PostEditPage 테스트 보강 (getPost 미호출 단언)
+- `63e5354` M2 통합 검증 통과: QA E2E, 보안 리뷰, coverage, history 정리
+- `2f96188` README 작성, OpenAPI 문서 생성
+- `5a9b245` T-20: 린트 설정을 저장소 안으로 (루트 ruff.toml, ADR 0002)
+- `9893edd` 최종 검수 통과: STATUS 완료 (D1~D7 확인)

@@ -128,6 +128,12 @@ NO_VERIFY = "--no-" + "verify"
         ("reviewer", "python3 -m pytest -q 2>&1 | tail -5", False),
         ("reviewer", "git diff HEAD", False),
         ("reviewer", "echo hacked > src/app.py", True),
+        # 검사 결과를 임시 폴더에 저장하는 것은 허용 (lessons L-21)
+        (
+            "reviewer",
+            "make audit > /tmp/scratch/audit.txt 2>&1; head -40 /tmp/scratch/audit.txt",
+            False,
+        ),
         ("reviewer", "sed -i 's/a/b/' src/app.py", True),
         ("qa", "git commit -am x", True),
         ("qa", "python3 -m pytest -q tests/acceptance > /dev/null", False),

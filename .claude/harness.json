@@ -7,7 +7,9 @@
     ".claude/*",
     "ruff.toml",
     "tests/*",
-    "docs/*"
+    "docs/*",
+    "examples/*",
+    "scripts/*"
   ],
 
   "secret_paths": [".env", ".env.*", "*.pem", "*.key", "id_rsa*"],
@@ -69,7 +71,7 @@
 
   "bash_rule_groups": {
     "file_write": [
-      "(^|[^>2&])>{1,2}\\s*(?!/dev/null)[\\w./~-]",
+      "(^|[^>2&])>{1,2}\\s*(?!/dev/null|/tmp/)[\\w./~-]",
       "\\bsed\\s+(-[a-zA-Z]*i|--in-place)",
       "(^|[;&|]\\s*)(rm|mv|cp|tee|touch|truncate|chmod)\\s",
       "\\bpython3?\\s+-c\\s+[^;&|\\n]*(open\\(|write)"

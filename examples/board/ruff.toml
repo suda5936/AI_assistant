@@ -1,0 +1,21 @@
+# 회사 공통 ruff.toml(하네스 루트)의 규칙 복사본이다. extend 금지.
+# 회사 규칙이 바뀌면 이 파일도 같이 바꾼다. (docs/adr/0002-project-lint-config.md)
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = [
+  "E", "W", "F",   # 기본 오류, 사용하지 않는 import/변수
+  "I",             # import 정렬
+  "N",             # 이름 규칙
+  "B",             # 흔한 버그 패턴
+  "UP", "SIM",     # 최신 문법, 단순화
+  "BLE",           # except Exception 뭉뚱그려 잡기
+  "T10", "T20",    # breakpoint/pdb, print
+  "S",             # 보안 (eval, exec, shell=True, 하드코딩 비밀번호 등)
+]
+
+[lint.per-file-ignores]
+"**/cli.py" = ["T20"]                        # 사용자 출력 전용 모듈은 print 허용
+# 테스트에서는 assert, 가짜 비밀번호, 가짜 임시 경로, 프로그램 실행(subprocess), print 허용
+"**/tests/**" = ["S101", "S105", "S106", "S108", "S603", "S607", "T20"]

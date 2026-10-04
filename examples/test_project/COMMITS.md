@@ -1,0 +1,6 @@
+- `c65263d` T-01: 환경 구성, 모델, 예외
+- `1654bb3` T-02: 저장소(storage) 구현
+- `6e79fe9` T-03: 규칙(service) 구현
+- `f32830c` T-04: CLI 구현
+- `9b81323` T-05: 로그가 stderr로 새는 문제 수정, M1 통합 검증 문서
+- `3eaa6a9` 최종 검수: README, history, STATUS 완료
