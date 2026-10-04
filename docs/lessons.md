@@ -18,4 +18,6 @@
 | L-12 | 2026-10-03 | 하네스 작업 중 `git push … && … pgrep -f …` 명령이 "force push"로 차단됨 (오탐) | 차단 정규식의 `.*`가 `;`, `&&` 같은 명령 구분자를 넘어 다른 명령의 `-f`까지 매칭 | 명령 패턴 3개를 구분자를 넘지 않도록(`[^;&\|\n]*`) 수정, 회귀 테스트 2개 추가 | 해결 |
 | L-13 | 2026-10-03 | board 실전: 에이전트들이 `.env.example`을 읽지 못함. 에이전트는 우회하지 않고 PM에게 보고 | 읽기 금지 규칙 `Read(./**/.env.*)`가 예시 파일까지 막음 | 금지 대상을 실제 비밀 파일 이름(`.env`, `.env.local`, `.env.production` 등)으로 좁힘 | 해결 |
 | L-14 | 2026-10-03 | board 실전: **qa가 지시서("구현 코드를 읽지 않는다")를 어기고 구현 코드를 읽음.** PM이 발견해 STATUS에 기록 | 읽기 제한이 지시서(부탁)뿐이었음 | `guard_read` 훅 추가: 권한표의 `read_deny`로 qa의 `src/` 읽기(Read·Grep·Glob)를 차단. 테스트 7개 추가 | 해결 |
+| L-15 | 2026-10-04 | board 실전: 프론트엔드가 생긴 뒤 `make check`가 2분을 넘어, developer가 기다리느라 시간을 쓰고 품질 게이트도 느려짐 | 타입 검사(tsc 2회)·vitest·pytest를 매번 전부 실행 | env-setup의 "check는 1~2분 안" 기준을 실제로 넘음. 개선 후보: 변경된 컴포넌트(backend/frontend)만 검사하는 `make check-changed`, vitest `--changed` | 관찰 |
+| L-16 | 2026-10-04 | board 실전: 헤드리스 실행(`claude -p`)이 T-15 도중 종료됨. 로그: "Background tasks still running after 600s; terminating" | 헤드리스 모드는 백그라운드 에이전트를 최대 600초만 기다림 | 헤드리스로 /ship을 돌릴 때는 `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` 설정 (README에 명시). 끊긴 작업은 세션 재개 절차로 이어감 | 해결 |
 | L-11 | 2026-10-03 | qa가 셸 명령(`sed -i`, `rm`)으로 파일을 바꾸려다 차단됨 | 역할별 셸 제한 | 의도된 동작. qa는 Edit 도구를 써서 수정 시 검사도 거치게 됨. 임시 폴더 정리 정도는 허용할지 추후 판단 | 관찰 |

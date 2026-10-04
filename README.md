@@ -102,7 +102,8 @@ claude                      # 처음 실행 시 작업 공간 신뢰(trust)를 �
 - 요구 도구: Python 3.11+, `ruff`, `pytest`, `make`, (서비스) Node 22, Playwright 브라우저
 - 세션이 끊기면 다시 `claude`를 실행하면 됩니다. 시작 훅이 진행 중인 프로젝트를 알려주고 PM이 이어서 진행합니다.
 - 에이전트나 스킬을 추가·수정한 뒤에는 **새 세션**을 시작해야 반영됩니다 (lessons L-04).
-- 헤드리스 실행: `claude -p "/ship ..." --permission-mode acceptEdits --allowedTools Bash`
+- 헤드리스 실행: `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 claude -p "/ship ..." --permission-mode acceptEdits --allowedTools Bash`
+  (환경변수가 없으면 헤드리스 모드는 10분 넘게 걸리는 에이전트 작업을 기다리지 않고 종료합니다 — lessons L-16)
 
 ### 하네스 자체를 고칠 때 (관리자 모드)
 에이전트는 `CLAUDE.md`, `.claude/`, `tests/` 등 하네스 영역을 수정할 수 없습니다 (훅이 차단, 셸 우회는 품질 게이트가 변조로 감지).
