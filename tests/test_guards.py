@@ -66,7 +66,7 @@ def test_admin_mode_does_not_bypass_roles_in_workplace(harness: Harness) -> None
 
 
 def test_non_admin_cannot_touch_harness_area(harness: Harness) -> None:
-    result = harness.run("guard_write.py", edit_event(harness.root / "scripts/report.py"))
+    result = harness.run("guard_write.py", edit_event(harness.root / "notes/memo.md"))
     assert result.returncode == 2
     assert "workplace 밖" in result.stderr
 
