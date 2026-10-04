@@ -26,7 +26,15 @@ STATUS = """# STATUS: shop
 
 
 def dryrun_env(tmp: Path) -> dict:
-    return {"HARNESS_NOTIFY_DRYRUN": str(tmp / "mail.txt")}
+    return {
+        "HARNESS_NOTIFY_DRYRUN": str(tmp / "mail.txt"),
+        "HARNESS_DESKTOP_DRYRUN": str(tmp / "desktop.txt"),
+    }
+
+
+def desktop(tmp: Path) -> str:
+    path = tmp / "desktop.txt"
+    return path.read_text(encoding="utf-8") if path.exists() else ""
 
 
 def mails(tmp: Path) -> str:
@@ -108,3 +116,48 @@ def test_doctor_brief_lists_only_missing(harness: Harness) -> None:
     assert result.returncode == 1
     assert "사람 설치 필요" in result.stdout
     assert "자동 설치 가능" in result.stdout
+
+
+def test_desktop_and_email_both_receive(harness: Harness, tmp_path: Path) -> None:
+    harness.write(f"{P}/STATUS.md", STATUS)
+    harness.run("notify_hooks.py", {"hook_event_name": "Stop"}, dryrun_env(tmp_path))
+    assert "[AI_assistant] 결정 필요: shop (2건)" in desktop(tmp_path)
+    assert "결정 필요: shop (2건)" in mails(tmp_path)
+
+
+def test_repeated_permission_prompts_still_alert(harness: Harness, tmp_path: Path) -> None:
+    """권한 확인 창은 같은 문구가 반복되므로 2시간이 아니라 짧게(2분) 중복을 막는다."""
+    event = {
+        "hook_event_name": "Notification",
+        "notification_type": "permission_prompt",
+        "message": "Claude needs your permission to use Bash",
+    }
+    harness.run("notify_hooks.py", event, dryrun_env(tmp_path))
+    state = harness.root / ".harness" / "state" / "notified.json"
+    sent = json.loads(state.read_text())
+    state.write_text(json.dumps({k: v - 180 for k, v in sent.items()}))  # 3분 전으로
+    harness.run("notify_hooks.py", event, dryrun_env(tmp_path))
+    assert desktop(tmp_path).count("=====") == 2
+
+
+def test_notify_test_command(harness: Harness, tmp_path: Path) -> None:
+    result = harness.run("notify.py", {}, dryrun_env(tmp_path))
+    assert result.returncode == 1  # 인자 없으면 사용법
+    import subprocess
+    import sys
+
+    from conftest import HOOKS
+
+    env = {
+        "CLAUDE_PROJECT_DIR": str(harness.root),
+        "HOME": str(harness.home),
+        **dryrun_env(tmp_path),
+    }
+    proc = subprocess.run(
+        [sys.executable, str(HOOKS / "notify.py"), "--test"],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert proc.returncode == 0
+    assert "desktop=dryrun" in proc.stdout and "email=dryrun" in proc.stdout

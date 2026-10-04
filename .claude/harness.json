@@ -3,8 +3,10 @@
 
   "notify": {
     "enabled": true,
+    "channels": ["desktop", "email"],
     "to": "gustlr3308@naver.com",
-    "dedupe_minutes": 120
+    "dedupe_minutes": 120,
+    "dedupe_minutes_prompt": 2
   },
 
   "protected_paths": [

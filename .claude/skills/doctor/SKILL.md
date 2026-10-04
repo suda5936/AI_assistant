@@ -1,6 +1,6 @@
 ---
 name: doctor
-description: 개발 도구 점검·자동 설치와 사람 승인 요청 절차. 필요한 도구(python, git, make, ruff, pytest, node, playwright 브라우저)가 있는지 확인하고, 자동으로 설치할 수 있는 것은 설치하고, 관리자 권한이 필요한 것은 대표에게 메일로 요청한다. /ship 시작 전, 세션 시작 훅이 도구 누락을 알렸을 때, 명령이 'command not found'로 실패했을 때 사용한다.
+description: 개발 도구 점검·자동 설치와 사람 승인 요청 절차. 필요한 도구(python, git, make, ruff, pytest, node, playwright 브라우저)가 있는지 확인하고, 자동으로 설치할 수 있는 것은 설치하고, 관리자 권한이 필요한 것은 대표에게 알림(바탕화면·메일)으로 요청한다. /ship 시작 전, 세션 시작 훅이 도구 누락을 알렸을 때, 명령이 'command not found'로 실패했을 때 사용한다.
 ---
 
 # 도구 점검과 승인 요청
@@ -31,7 +31,7 @@ python3 .claude/hooks/doctor.py --notify [--service]
 - 진행 중인 프로젝트가 있으면 STATUS의 "사용자 결정 대기"에도 적는다 (메일이 다시 정리되어 간다).
 - 그 도구가 없어도 할 수 있는 일(명세, 설계 등)은 계속 진행한다. 막히는 단계에서만 멈춘다.
 
-## 4. 그 밖의 "사람만 할 수 있는 일" (메일로 알림)
+## 4. 그 밖의 "사람만 할 수 있는 일" (바탕화면·메일 알림)
 아래는 훅이 자동으로 메일을 보낸다. PM은 STATUS의 "사용자 결정 대기"에 정확히 적기만 하면 된다.
 | 상황 | 메일을 보내는 것 |
 |---|---|
@@ -40,7 +40,7 @@ python3 .claude/hooks/doctor.py --notify [--service]
 | 품질 게이트 3회 연속 실패 | 품질 게이트 훅이 메일 |
 | 그 밖에 PM 판단으로 꼭 알려야 할 것 | `python3 .claude/hooks/notify.py "<제목>" "<본문>"` |
 
-같은 내용은 2시간 안에 다시 보내지 않는다. 메일 설정이 없으면 `.harness/notifications.md`에만 남는다.
+알림은 바탕화면과 메일(설정했을 때)로 간다. 대표가 휴대폰 Claude 앱으로 세션을 연결했다면 앱에서 바로 답할 수 있다. 모든 알림은 `.harness/notifications.md`에도 남는다.
 
 ## STATUS에 쓰는 형식 (메일 본문이 된다)
 ```markdown
