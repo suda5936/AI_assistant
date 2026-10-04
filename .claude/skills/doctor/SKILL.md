@@ -9,23 +9,23 @@ description: 개발 도구 점검·자동 설치와 사람 승인 요청 절차.
 
 ## 1. 점검
 ```bash
-python3 .claude/hooks/doctor.py            # CLI·파이썬 프로젝트
-python3 .claude/hooks/doctor.py --service  # 웹 서비스 (node, 브라우저 포함)
+bash .claude/hooks/run.sh doctor.py            # CLI·파이썬 프로젝트
+bash .claude/hooks/run.sh doctor.py --service  # 웹 서비스 (node, 브라우저 포함)
 ```
 
 ## 2. 자동 설치 (사람 승인 불필요)
 관리자 권한 없이 사용자 영역에 설치되는 것은 바로 설치한다.
 ```bash
-python3 .claude/hooks/doctor.py --fix [--service]
+bash .claude/hooks/run.sh doctor.py --fix [--service]
 ```
 - 대상: ruff, pytest (`pip install --user`), Playwright 브라우저
 - 프로젝트 의존성(`make setup`의 `.venv`, `npm ci`의 `node_modules`)은 원래 developer가 설치한다.
-- 설치 후 다시 점검해 해결됐는지 확인한다. `--user` 설치 후 명령을 못 찾으면 `python3 -m ruff`처럼 모듈로 실행한다.
+- 설치 후 다시 점검해 해결됐는지 확인한다. `--user` 설치 후 명령을 못 찾으면 `python -m ruff`처럼 모듈로 실행한다.
 
 ## 3. 사람이 해야 하는 것 → 알림 요청
 시스템 설치·관리자 권한(UAC, sudo)·PATH 변경이 필요한 도구(python, git, make, node)는 에이전트가 하지 않는다.
 ```bash
-python3 .claude/hooks/doctor.py --notify [--service]
+bash .claude/hooks/run.sh doctor.py --notify [--service]
 ```
 - 대표에게 설치 명령이 담긴 알림이 간다.
 - 진행 중인 프로젝트가 있으면 STATUS의 "사용자 결정 대기"에도 적는다 (알림이 다시 정리되어 간다).
@@ -38,7 +38,7 @@ python3 .claude/hooks/doctor.py --notify [--service]
 | 명세 질문·승인, ADR 승인, 3회 반려 | PM이 STATUS "사용자 결정 대기"에 기록 → Stop 훅이 알림 |
 | Claude Code가 권한 확인 창을 띄움 | Notification 훅이 알림 |
 | 품질 게이트 3회 연속 실패 | 품질 게이트 훅이 알림 |
-| 그 밖에 PM 판단으로 꼭 알려야 할 것 | `python3 .claude/hooks/notify.py "<제목>" "<본문>"` |
+| 그 밖에 PM 판단으로 꼭 알려야 할 것 | `bash .claude/hooks/run.sh notify.py "<제목>" "<본문>"` |
 
 알림은 바탕화면에 뜬다. 대표가 휴대폰 Claude 앱으로 세션을 연결했다면 앱에서 바로 답할 수 있다. 모든 알림은 `.harness/notifications.md`에도 남는다.
 

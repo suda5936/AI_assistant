@@ -6,11 +6,11 @@
 - 사람(human): 시스템 설치나 관리자 권한이 필요하다 -> 설치 명령과 함께 대표에게 알림 (--notify)
 
 사용법
-  python3 .claude/hooks/doctor.py              점검 결과 출력
-  python3 .claude/hooks/doctor.py --fix        자동 설치 가능한 것은 설치
-  python3 .claude/hooks/doctor.py --notify     사람이 설치해야 하는 것은 알림으로 요청
-  python3 .claude/hooks/doctor.py --service    웹 서비스 도구(node, npm, 브라우저)까지 점검
-  python3 .claude/hooks/doctor.py --brief      없는 것만 한 줄씩 (세션 시작 훅용)
+  bash .claude/hooks/run.sh doctor.py              점검 결과 출력
+  bash .claude/hooks/run.sh doctor.py --fix        자동 설치 가능한 것은 설치
+  bash .claude/hooks/run.sh doctor.py --notify     사람이 설치해야 하는 것은 알림으로 요청
+  bash .claude/hooks/run.sh doctor.py --service    웹 서비스 도구(node, npm, 브라우저)까지 점검
+  bash .claude/hooks/run.sh doctor.py --brief      없는 것만 한 줄씩 (세션 시작 훅용)
 """
 
 from __future__ import annotations

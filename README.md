@@ -136,7 +136,7 @@ claude                      # 처음 실행 시 작업 공간 신뢰(trust)를 �
 
 ```bash
 ./scripts/start.sh                       # 휴대폰 앱과 연결된 세션으로 시작 (평소 이렇게)
-python3 .claude/hooks/notify.py --test   # 알림 테스트 (desktop=sent 가 나오면 성공)
+bash .claude/hooks/run.sh notify.py --test   # 알림 테스트 (desktop=sent 가 나오면 성공)
 ```
 - 휴대폰: Claude 앱에 같은 계정으로 로그인 → Code 목록에서 이 세션 열기. 앱의 알림 권한을 켜 두세요.
 - 같은 결정 알림은 2시간, 권한 확인 창 알림은 2분 안에 다시 띄우지 않습니다. 모든 알림은 `.harness/notifications.md`에도 남습니다.

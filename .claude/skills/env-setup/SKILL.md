@@ -20,7 +20,8 @@ description: 프로젝트 환경 구성 규칙. 표준 Makefile 명령(setup, ch
 
 ## 파이썬 프로젝트
 - 구조: `src/<패키지>/` + `tests/unit/`, `tests/acceptance/`. 패키지 정보는 `pyproject.toml` 하나에 둔다.
-- 가상환경은 프로젝트 안의 `.venv/`. Makefile은 `.venv`가 있으면 그것을, 없으면 시스템 python3를 쓴다.
+- 가상환경은 프로젝트 안의 `.venv/`. Makefile은 `.venv`가 있으면 그것을, 없으면 시스템 파이썬을 쓴다.
+- **Windows도 지원한다** (lessons L-23): `python3`를 직접 쓰지 않는다(Windows에서는 Store로 연결되는 가짜 실행 파일). 동작하는 파이썬을 찾아 쓰고, 가상환경 경로는 `.venv/bin/python`(맥·리눅스)과 `.venv/Scripts/python.exe`(Windows)를 모두 찾는다. ruff·pytest는 `$(PY) -m ruff`처럼 모듈로 실행한다(`--user` 설치 후 PATH에 없을 수 있음).
 - **린트 규칙은 회사 공통 `ruff.toml`(하네스 루트)을 프로젝트 루트에 복사해 둔다** (환경 구성 태스크에서). 하네스 밖에 클론해도 같은 규칙으로 검사되어야 하기 때문이다 (D3, lessons L-17).
   - 복사본 첫 줄에 "회사 공통 ruff.toml의 복사본. 회사 규칙이 바뀌면 함께 바꾼다"를 적는다. 규칙을 빼거나 완화하지 않는다. `extend`로 저장소 밖 파일을 참조하지 않는다.
   - `pyproject.toml`에는 `[tool.ruff]`를 두지 않는다 (두면 그 폴더에서 루트 복사본을 가린다).
@@ -28,18 +29,24 @@ description: 프로젝트 환경 구성 규칙. 표준 Makefile 명령(setup, ch
 - 의존성은 버전 범위를 명시한다 (예: `fastapi>=0.110,<1`). 개발 도구는 `[project.optional-dependencies] dev`에.
 
 ```makefile
-PY := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
+# 동작하는 시스템 파이썬 3.11+ (Windows의 가짜 python3 건너뜀)
+SYS_PY := $(shell for p in python3 python py; do $$p -c "import sys; sys.exit(sys.version_info < (3, 11))" >/dev/null 2>&1 && echo $$p && break; done)
+VENV_PY := $(firstword $(wildcard .venv/bin/python .venv/Scripts/python.exe))
+PY := $(if $(VENV_PY),$(VENV_PY),$(SYS_PY))
 
-.PHONY: setup check lint test run
+.PHONY: setup deps check lint test run
 setup:
-	python3 -m venv .venv
-	.venv/bin/pip install -q -e ".[dev]"
+	$(SYS_PY) -m venv .venv
+	$(MAKE) deps
+
+deps:  # 새 make에서 실행해야 방금 만든 .venv의 파이썬을 찾는다
+	$(PY) -m pip install -q -e ".[dev]"
 
 check: lint test
 
 lint:
-	ruff check .
-	ruff format --check .
+	$(PY) -m ruff check .
+	$(PY) -m ruff format --check .
 
 test:
 	$(PY) -m pytest -q

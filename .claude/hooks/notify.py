@@ -11,7 +11,7 @@
 환경변수
   HARNESS_DESKTOP_DRYRUN  파일 경로. 지정하면 알림을 띄우지 않고 이 파일에 기록 (테스트용)
 
-직접 실행:  python3 .claude/hooks/notify.py --test
+직접 실행:  bash .claude/hooks/run.sh notify.py --test
 """
 
 from __future__ import annotations

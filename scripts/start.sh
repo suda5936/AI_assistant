@@ -16,7 +16,8 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-python3 .claude/hooks/doctor.py --brief || true
+# Windows의 python3는 가짜 실행 파일일 수 있어 훅 실행기를 거친다 (lessons L-23)
+bash .claude/hooks/run.sh doctor.py --brief || true
 
 if [ "${1:-}" = "--local" ]; then
   exec claude
