@@ -93,8 +93,6 @@
     {"pattern": "\\bgit\\s+reset\\s+--hard", "reason": "git reset --hard는 작업을 날릴 수 있어 금지입니다."},
     {"pattern": "--no-verify", "reason": "검증 우회(--no-verify)는 금지입니다."},
     {"pattern": "harness-admin", "reason": "하네스 관리자 모드는 사람만 켤 수 있습니다."},
-    {"pattern": "(^|[;&|]\\s*)(sed|tee|cp|mv|rm|touch|truncate)\\s[^;&|\\n]*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
-    {"pattern": ">\\s*\\S*(\\.claude/|CLAUDE\\.md)", "reason": "에이전트는 하네스 설정(.claude/, CLAUDE.md)을 수정할 수 없습니다."},
     {"pattern": "(curl|wget)[^|]*\\|\\s*(ba|z)?sh", "reason": "원격 스크립트를 바로 실행(curl | sh)하는 것은 금지입니다."}
   ],
 

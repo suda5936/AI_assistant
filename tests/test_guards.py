@@ -145,3 +145,60 @@ NO_VERIFY = "--no-" + "verify"
 def test_bash_rules(harness: Harness, role: str | None, command: str, blocked: bool) -> None:
     result = harness.run("guard_bash.py", bash_event(command, role))
     assert (result.returncode == 2) is blocked, result.stderr
+
+
+# PM을 포함한 모든 역할은 셸 명령으로도 하네스를 바꿀 수 없다 (lessons L-24)
+HARNESS_SHELL_CASES = [
+    # (명령, 작업 위치(하네스 루트 기준), 차단 여부)
+    ("cp /tmp/x.py .claude/hooks/guard_write.py", ".", True),
+    ("mv .claude/harness.json /tmp/old.json", ".", True),
+    ("rm -f CLAUDE.md", ".", True),
+    ("sed -i 's/a/b/' docs/lessons.md", ".", True),
+    ("echo '{}' >> .claude/harness.json", ".", True),
+    ("cat > ruff.toml <<'EOF'\nline-length = 200\nEOF", ".", True),
+    ("printf x | tee scripts/start.sh", ".", True),
+    ("cd .claude && sed -i 's/a/b/' settings.json", ".", True),
+    ("cp x.md ../../CLAUDE.md", "workplace/shop", True),
+    ("cp x ../../tests/conftest.py", "workplace/shop", True),
+    ("python3 -c \"open('.claude/settings.json', 'w').write('{}')\"", ".", True),
+    (
+        "python - <<'PY'\nfrom pathlib import Path\nPath('CLAUDE.md').write_text('')\nPY",
+        ".",
+        True,
+    ),
+    ("node -e \"require('fs').writeFileSync('.claude/harness.json', '{}')\"", ".", True),
+    ("git checkout -- .claude", ".", True),
+    ("git restore CLAUDE.md", ".", True),
+    ("git stash", ".", True),
+    ('cp x "$CLAUDE_PROJECT_DIR/.claude/hooks/_lib.py"', ".", True),
+    # 읽기·복사해 오기·프로젝트 안의 작업은 허용
+    ("sed -n 1,20p .claude/hooks/guard_bash.py", ".", False),
+    ("cat CLAUDE.md && grep -n x .claude/harness.json", ".", False),
+    ("cp .claude/skills/env-setup/SKILL.md /tmp/ref.md", ".", False),
+    ("cp ../../ruff.toml ruff.toml", "workplace/shop", False),
+    ("rm -f build.log; cat CLAUDE.md", ".", False),
+    ("python3 -m pytest -q 2>&1 | tail -5", ".", False),
+    ("make check > /dev/null 2>&1", "workplace/shop", False),
+    ("echo x > docs/01_spec.md", "workplace/shop", False),
+    ("rm -rf tests/unit/__pycache__", "workplace/shop", False),
+    ("git checkout -b feature", "workplace/shop", False),
+    ("cd workplace/shop && git stash", ".", False),
+    ("python3 -c \"print(open('.claude/harness.json').read())\"", ".", False),
+]
+
+
+@pytest.mark.parametrize(("command", "cwd", "blocked"), HARNESS_SHELL_CASES)
+def test_harness_cannot_be_changed_by_shell(
+    harness: Harness, command: str, cwd: str, blocked: bool
+) -> None:
+    (harness.root / cwd).mkdir(parents=True, exist_ok=True)
+    for role in (None, "architect"):  # PM(메인)과 서브에이전트 모두 (git 제한 없는 역할)
+        event = {**bash_event(command, role), "cwd": str(harness.root / cwd)}
+        result = harness.run("guard_bash.py", event)
+        assert (result.returncode == 2) is blocked, (role, result.stderr)
+
+
+def test_admin_can_change_harness_by_shell(harness: Harness) -> None:
+    harness.admin_on()
+    event = {**bash_event("sed -i 's/a/b/' CLAUDE.md", None), "cwd": str(harness.root)}
+    assert harness.run("guard_bash.py", event).returncode == 0
