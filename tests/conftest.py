@@ -41,6 +41,22 @@ class Harness:
             timeout=120,
         )
 
+    def run_args(
+        self, script: str, args: list[str], extra_env: dict | None = None
+    ) -> subprocess.CompletedProcess:
+        """이벤트 없이 명령줄 인자로 실행한다 (notify.py --test 등)."""
+        env = {**os.environ, "CLAUDE_PROJECT_DIR": str(self.root), "HOME": str(self.home)}
+        env = {k: v for k, v in env.items() if not k.startswith("HARNESS_")}
+        env.update(extra_env or {})
+        return subprocess.run(
+            [sys.executable, str(HOOKS / script), *args],
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=120,
+            stdin=subprocess.DEVNULL,
+        )
+
     def write(self, rel: str, text: str) -> Path:
         path = self.root / rel
         path.parent.mkdir(parents=True, exist_ok=True)

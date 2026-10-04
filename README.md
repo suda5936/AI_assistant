@@ -133,14 +133,13 @@ claude                      # 처음 실행 시 작업 공간 신뢰(trust)를 �
 |---|---|---|
 | **바탕화면 알림** | 없음 (Windows 토스트 / Mac 알림 센터 / Linux notify-send) | 컴퓨터 앞에 있을 때 |
 | **휴대폰 Claude 앱** | `./scripts/start.sh`로 시작 (Remote Control) | 자리를 비웠을 때. 앱에서 바로 답하고 승인 |
-| 메일 (선택) | `.env`에 **발송용** 메일 계정 (알림 전용 계정 + 앱 비밀번호 권장) | 기록을 남기고 싶을 때 |
 
 ```bash
 ./scripts/start.sh                       # 휴대폰 앱과 연결된 세션으로 시작 (평소 이렇게)
 python3 .claude/hooks/notify.py --test   # 알림 테스트 (desktop=sent 가 나오면 성공)
 ```
 - 휴대폰: Claude 앱에 같은 계정으로 로그인 → Code 목록에서 이 세션 열기. 앱의 알림 권한을 켜 두세요.
-- 메일 받는 주소는 `.claude/harness.json`의 `notify.to`입니다. 같은 결정 알림은 2시간, 권한 확인 창 알림은 2분 안에 다시 보내지 않습니다.
+- 같은 결정 알림은 2시간, 권한 확인 창 알림은 2분 안에 다시 띄우지 않습니다. 모든 알림은 `.harness/notifications.md`에도 남습니다.
 
 ### 하네스 자체를 고칠 때 (관리자 모드)
 에이전트는 `CLAUDE.md`, `.claude/`, `tests/` 등 하네스 영역을 수정할 수 없습니다 (훅이 차단, 셸 우회는 품질 게이트가 변조로 감지).

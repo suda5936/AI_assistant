@@ -145,7 +145,7 @@ def tamper_once(tampered: list[str]) -> bool:
 
 
 def notify_gave_up(names: list[str], failures: list[str], max_retries: int) -> None:
-    """에이전트가 스스로 해결하지 못한 상태 -> 대표에게 메일."""
+    """에이전트가 스스로 해결하지 못한 상태 -> 대표에게 알림."""
     try:
         from notify import send
     except ImportError:
