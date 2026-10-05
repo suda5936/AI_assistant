@@ -24,4 +24,5 @@ if [ "${1:-}" = "--local" ]; then
 fi
 
 echo "휴대폰 Claude 앱과 연결된 세션으로 시작합니다. (앱 > Code 에서 이 세션을 여세요)"
-exec claude remote-control
+# same-dir: workplace/ 는 하네스 git에 없어서 worktree 모드로 열면 프로젝트가 보이지 않는다
+exec claude remote-control --spawn=same-dir
