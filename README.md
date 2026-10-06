@@ -49,7 +49,7 @@ AI_assistant/
 | PM (메인 세션) | 명세, 작업 분배, STATUS, 최종 검수, 커밋 | `docs/00_request.md`, `01_spec.md`, `STATUS.md`, `README.md` | - |
 | architect | 전체·마일스톤 설계, API 계약, ADR | `docs/02_design.md`, `docs/milestones/`, `docs/adr/` | opus |
 | developer | 설계대로 구현 + 단위 테스트 | 코드 전체 (문서, 인수·E2E 테스트 제외), 커밋 불가 | sonnet |
-| reviewer | 설계·규칙 기준 코드 리뷰, 통과/반려 | `docs/reviews/`, 셸 쓰기·커밋 불가 | opus |
+| reviewer | 설계·규칙 기준 코드 리뷰, 통과/반려 | `docs/reviews/`, 셸 쓰기·커밋 불가 | sonnet |
 | qa | **명세만 보고** 인수 테스트·E2E 작성·실행 | `docs/qa/`, `tests/acceptance/`, `tests/e2e/` | sonnet |
 | security-reviewer | 인증·권한·인젝션·의존성 취약점 검토 | `docs/reviews/security-*` | opus |
 
@@ -99,8 +99,9 @@ SessionStart: session_start — 진행 중인 프로젝트의 STATUS 요약을 �
  PM ─ spec-writing ─▶ 01_spec.md (AC, 마일스톤, 질문) ──▶ ✋ 대표 승인
  architect ─────────▶ 02_design.md + milestones/M1.md (API 계약, AC 추적표, 태스크)
  마일스톤마다:
-   태스크마다: developer ⇄ [훅] ─▶ reviewer ─반려─▶ developer … ─▶ qa ─▶ PM 커밋
-   통합 검증: make check → qa(회귀 + E2E) → security-reviewer → audit → coverage
+   태스크마다: developer ⇄ [훅] ─▶ reviewer ─반려─▶ developer … ─▶ PM 커밋
+   마일스톤 끝: make check → qa(AC 인수 테스트 + 회귀 + E2E) → security-reviewer → audit → coverage
+   ✋ PM 멈춤 → 대표가 새 세션으로 다음 마일스톤 시작 (토큰 절약)
  PM ─ 최종 검수 (D1~D7을 명령으로 확인) ─▶ 대표에게 보고
 ```
 

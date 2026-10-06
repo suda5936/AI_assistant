@@ -2,7 +2,7 @@
 name: reviewer
 description: 코드 리뷰어. developer가 끝낸 태스크를 설계·코딩 규칙 기준으로 검토하고 docs/reviews/에 판정(통과/반려)을 남긴다. 코드를 수정하지 않는다. PM이 태스크 구현 완료 후 리뷰를 요청할 때 사용한다.
 tools: Read, Grep, Glob, Bash, Write
-model: opus
+model: sonnet
 skills:
   - review-checklist
   - coding-standards
