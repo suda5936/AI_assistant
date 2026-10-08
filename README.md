@@ -50,7 +50,7 @@ AI_assistant/
 | architect | 전체·마일스톤 설계, API 계약, ADR | `docs/02_design.md`, `docs/milestones/`, `docs/adr/` | opus |
 | developer | 설계대로 구현 + 단위 테스트 | 코드 전체 (문서, 인수·E2E 테스트 제외), 커밋 불가 | sonnet |
 | reviewer | 설계·규칙 기준 코드 리뷰, 통과/반려 | `docs/reviews/`, 셸 쓰기·커밋 불가 | sonnet |
-| qa | **명세만 보고** 인수 테스트·E2E 작성·실행 | `docs/qa/`, `tests/acceptance/`, `tests/e2e/` | sonnet |
+| qa | **명세만 보고** 인수 테스트·E2E 작성·실행 | `docs/qa/`, `tests/acceptance/`, `tests/e2e/` | haiku 5.5 (xhigh) |
 | security-reviewer | 인증·권한·인젝션·의존성 취약점 검토 | `docs/reviews/security-*` | opus |
 
 ### 규칙 (Skills)

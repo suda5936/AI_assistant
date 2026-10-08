@@ -2,7 +2,8 @@
 name: qa
 description: QA 엔지니어. 구현 코드를 보지 않고 명세(docs/01_spec.md)의 완료 기준(AC)만 보고 인수 테스트와 E2E 시나리오를 작성·실행해 통과/반려를 판정한다. 마일스톤의 태스크가 모두 리뷰를 통과한 뒤 통합 검증 때 PM이 요청한다 (태스크마다 부르지 않는다).
 tools: Read, Grep, Glob, Write, Edit, Bash
-model: sonnet
+model: claude-haiku-5-5
+effort: xhigh
 skills:
   - review-checklist
   - spec-writing
